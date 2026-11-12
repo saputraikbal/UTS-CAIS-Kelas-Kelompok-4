@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modul Data Mahasiswa - Portal Proyek</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --success: #10b981;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background: var(--bg); color: var(--text-main); }
+
+    /* Navbar sama dengan Dashboard */
+    .navbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-brand { font-weight: 700; font-size: 1.1rem; color: var(--primary); }
+    .nav-links { display: flex; gap: 16px; align-items: center; }
+    .nav-links a { text-decoration: none; color: var(--text-muted); font-size: 0.9rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--primary); }
+
+    .btn-logout {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .btn-logout:hover { background: #fecaca; }
+
+    /* Container & Header */
+    .container { max-width: 1100px; margin: 32px auto; padding: 0 20px; }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .page-header h1 { font-size: 1.5rem; font-weight: 700; }
+    .page-header p { font-size: 0.875rem; color: var(--text-muted); margin-top: 4px; }
+
+    .header-actions { display: flex; gap: 10px; }
+
+    .btn {
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-secondary { background: #e2e8f0; color: var(--text-main); }
+    .btn-secondary:hover { background: #cbd5e1; }
+
+    /* Search & Filter Bar */
+    .toolbar {
+      background: var(--surface);
+      padding: 16px 20px;
+      border-radius: 14px 14px 0 0;
+      border: 1px solid var(--border);
+      border-bottom: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .search-input {
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      width: 280px;
+      max-width: 100%;
+      font-size: 0.875rem;
+      outline: none;
+    }
+    .search-input:focus { border-color: var(--primary); }
+
+    /* Table */
+    .table-responsive {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 0 0 14px 14px;
+      overflow-x: auto;
+    }
+
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th {
+      background: #f1f5f9;
+      padding: 14px 18px;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 16px 18px;
+      font-size: 0.9rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f8fafc; }
+
+    .badge-role {
+      display: inline-block;
+      background: #eef2ff;
+      color: var(--primary);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .action-btns { display: flex; gap: 6px; }
+    .btn-sm {
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-edit { background: #fef3c7; color: #b45309; }
+    .btn-edit:hover { background: #fde68a; }
+    .btn-delete { background: #fee2e2; color: #b91c1c; }
+    .btn-delete:hover { background: #fecaca; }
+
+    /* Modal Form */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 100;
+    }
+    .modal-overlay.active { display: flex; }
+
+    .modal-box {
+      background: var(--surface);
+      width: 100%;
+      max-width: 500px;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+      animation: popIn 0.2s ease-out;
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .modal-header h2 { font-size: 1.2rem; }
+    .close-modal { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--text-muted); }
+
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 0.82rem; font-weight: 600; margin-bottom: 6px; }
+    .form-group input, .form-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.9rem;
+      outline: none;
+    }
+    .form-group input:focus, .form-group textarea:focus { border-color: var(--primary); }
+    .form-group small { display: block; font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-brand">🎓 Sistem Informasi Kelompok</div>
+    <div class="nav-links">
+      <a href="../index.html">Beranda</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="mahasiswa.html" style="color: var(--primary); font-weight: 700;">Data Mahasiswa</a>
+      <button class="btn-logout" onclick="logout()">Keluar</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <div>
+        <h1>Modul Data Mahasiswa</h1>
+        <p>Kelola data anggota kelompok, peran, dan rincian jobdesk (CRUD)</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-secondary" onclick="resetDefaultData()" title="Kembalikan ke 3 data awal">↻ Reset Data</button>
+        <button class="btn btn-primary" onclick="bukaModalTambah()">+ Tambah Mahasiswa</button>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <input type="text" id="searchInput" class="search-input" placeholder="Cari nama, NPM, atau peran..." oninput="renderTabel()" />
+      <span id="jumlahData" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Total: 0 Mahasiswa</span>
+    </div>
+
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>NPM</th>
+            <th>Nama Lengkap</th>
+            <th>Email</th>
+            <th>Peran</th>
+            <th>Jobdesk Utama</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tabelMahasiswa">
+          <!-- Baris data dirender otomatis via JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal Tambah / Edit Data Mahasiswa -->
+  <div class="modal-overlay" id="modalForm">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 id="modalTitle">Tambah Mahasiswa</h2>
+        <button class="close-modal" onclick="tutupModal()">&times;</button>
+      </div>
+
+      <form id="formMahasiswa">
+        <input type="hidden" id="editIndex" value="-1" />
+
+        <div class="form-group">
+          <label for="inputNpm">NPM</label>
+          <input type="text" id="inputNpm" placeholder="Contoh: 11523060" required />
+        </div>
+
+        <div class="form-group">
+          <label for="inputNama">Nama Lengkap</label>
+          <input type="text" id="inputNama" placeholder="Masukkan nama lengkap" required />
+        </div>
+
+        <div class="form-group">
+          <label for="inputEmail">Email</label>
+          <input type="email" id="inputEmail" placeholder="nama@gmail.com" required />
+        </div>
+
+        <div class="form-group">
+          <label for="inputPassword">Password Akun Login</label>
+          <input type="text" id="inputPassword" placeholder="Password untuk login ke sistem" required />
+        </div>
+
+        <div class="form-group">
+          <label for="inputPeran">Peran (Role)</label>
+          <input type="text" id="inputPeran" placeholder="Contoh: Anggota 4 - QA & Tester" required />
+        </div>
+
+        <div class="form-group">
+          <label for="inputJobdesk">Rincian Jobdesk</label>
+          <textarea id="inputJobdesk" rows="3" placeholder="Pisahkan setiap poin jobdesk dengan baris baru (Enter)" required></textarea>
+          <small>*Tekan Enter untuk memisahkan beberapa tugas.</small>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="tutupModal()">Batal</button>
+          <button type="submit" class="btn btn-primary">Simpan Data</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Proteksi Halaman: Wajib login terlebih dahulu
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    if (!currentUser) {
+      window.location.href = "login.html";
+    }
+
+    // Data bawaan awal jika halaman dibuka langsung tanpa lewat login
+    const defaultDataMahasiswa = [
+      {
+        nama: "Mochamad Ikbal Saputra",
+        npm: "11523049",
+        password: "ikbalsaputra20",
+        email: "ikbalsaputra744@gmail.com",
+        peran: "Anggota 1 - Project Lead & Frontend Architect",
+        jobdesk: [
+          "Membuat repository GitHub & workspace (Trello/GitHub Projects).",
+          "Mengatur struktur folder proyek & template navigasi/layout dasar.",
+          "Code review dan merge kode dari anggota lain."
+        ]
+      },
+      {
+        nama: "Zainal Abidin .B",
+        npm: "11523054",
+        password: "ZEN300301",
+        email: "zenabdn30@gmail.com",
+        peran: "Anggota 2 - Auth & Dashboard Developer",
+        jobdesk: [
+          "Membuat antarmuka dan alur validasi login.",
+          "Mengembangkan halaman Dashboard (ringkasan data/statistik setelah user berhasil login)."
+        ]
+      },
+      {
+        nama: "Yayan Puryansyah",
+        npm: "11523059",
+        password: "yansper2001",
+        email: "puryansyahy@gmail.com",
+        peran: "Anggota 3 - Core Feature Developer & Dokumentasi",
+        jobdesk: [
+          "Membuat fitur CRUD (Tambah, Lihat, Edit, Hapus) pada Modul Data Mahasiswa.",
+          "Menulis file README.md (termasuk aturan komunikasi & commit)."
+        ]
+      }
+    ];
+
+    // Ambil data dari localStorage atau gunakan data default
+    function getDataMahasiswa() {
+      const saved = localStorage.getItem("db_mahasiswa");
+      if (!saved) {
+        localStorage.setItem("db_mahasiswa", JSON.stringify(defaultDataMahasiswa));
+        return [...defaultDataMahasiswa];
+      }
+      return JSON.parse(saved);
+    }
+
+    function saveDataMahasiswa(data) {
+      localStorage.setItem("db_mahasiswa", JSON.stringify(data));
+      renderTabel();
+    }
+
+    // READ: Render Tabel Mahasiswa + Pencarian
+    function renderTabel() {
+      const data = getDataMahasiswa();
+      const keyword = document.getElementById("searchInput").value.toLowerCase();
+      const tbody = document.getElementById("tabelMahasiswa");
+      tbody.innerHTML = "";
+
+      const filtered = data
+        .map((item, originalIndex) => ({ ...item, originalIndex }))
+        .filter(mhs =>
+          mhs.nama.toLowerCase().includes(keyword) ||
+          mhs.npm.toLowerCase().includes(keyword) ||
+          mhs.peran.toLowerCase().includes(keyword) ||
+          mhs.email.toLowerCase().includes(keyword)
+        );
+
+      document.getElementById("jumlahData").textContent = `Total: ${filtered.length} Mahasiswa`;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:28px; color:#64748b;">Data mahasiswa tidak ditemukan.</td></tr>`;
+        return;
+      }
+
+      filtered.forEach((mhs, idx) => {
+        const jobdeskHtml = Array.isArray(mhs.jobdesk)
+          ? `<ul style="padding-left:16px; margin:0;">${mhs.jobdesk.map(j => `<li>${j}</li>`).join("")}</ul>`
+          : mhs.jobdesk;
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${idx + 1}</td>
+          <td><strong>${mhs.npm}</strong></td>
+          <td>${mhs.nama}</td>
+          <td>${mhs.email}</td>
+          <td><span class="badge-role">${mhs.peran}</span></td>
+          <td style="max-width: 280px; font-size: 0.83rem;">${jobdeskHtml}</td>
+          <td>
+            <div class="action-btns">
+              <button class="btn-sm btn-edit" onclick="bukaModalEdit(${mhs.originalIndex})">Edit</button>
+              <button class="btn-sm btn-delete" onclick="hapusMahasiswa(${mhs.originalIndex})">Hapus</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // CREATE: Buka Modal Tambah
+    function bukaModalTambah() {
+      document.getElementById("modalTitle").textContent = "Tambah Data Mahasiswa";
+      document.getElementById("editIndex").value = "-1";
+      document.getElementById("formMahasiswa").reset();
+      document.getElementById("modalForm").classList.add("active");
+    }
+
+    // UPDATE: Buka Modal Edit
+    function bukaModalEdit(index) {
+      const data = getDataMahasiswa();
+      const mhs = data[index];
+
+      document.getElementById("modalTitle").textContent = "Edit Data Mahasiswa";
+      document.getElementById("editIndex").value = index;
+      document.getElementById("inputNpm").value = mhs.npm;
+      document.getElementById("inputNama").value = mhs.nama;
+      document.getElementById("inputEmail").value = mhs.email;
+      document.getElementById("inputPassword").value = mhs.password || "";
+      document.getElementById("inputPeran").value = mhs.peran;
+      document.getElementById("inputJobdesk").value = Array.isArray(mhs.jobdesk) ? mhs.jobdesk.join("\n") : mhs.jobdesk;
+
+      document.getElementById("modalForm").classList.add("active");
+    }
+
+    function tutupModal() {
+      document.getElementById("modalForm").classList.remove("active");
+    }
+
+    // Simpan Hasil Tambah / Edit
+    document.getElementById("formMahasiswa").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const data = getDataMahasiswa();
+      const index = parseInt(document.getElementById("editIndex").value, 10);
+
+      const npm = document.getElementById("inputNpm").value.trim();
+      const nama = document.getElementById("inputNama").value.trim();
+      const email = document.getElementById("inputEmail").value.trim();
+      const password = document.getElementById("inputPassword").value.trim();
+      const peran = document.getElementById("inputPeran").value.trim();
+      const jobdeskArray = document.getElementById("inputJobdesk").value
+        .split("\n")
+        .map(line => line.trim())
+        .filter(line => line !== "");
+
+      // Validasi NPM duplikat saat tambah baru
+      const isDuplicate = data.some((m, i) => m.npm === npm && i !== index);
+      if (isDuplicate) {
+        alert(`NPM ${npm} sudah terdaftar! Gunakan NPM lain.`);
+        return;
+      }
+
+      const objekMahasiswa = { nama, npm, password, email, peran, jobdesk: jobdeskArray };
+
+      if (index === -1) {
+        data.push(objekMahasiswa);
+      } else {
+        data[index] = objekMahasiswa;
+      }
+
+      saveDataMahasiswa(data);
+      tutupModal();
+    });
+
+    // DELETE: Hapus Data Mahasiswa
+    function hapusMahasiswa(index) {
+      const data = getDataMahasiswa();
+      const target = data[index];
+      if (confirm(`Yakin ingin menghapus data "${target.nama}" (${target.npm})?`)) {
+        data.splice(index, 1);
+        saveDataMahasiswa(data);
+      }
+    }
+
+    // Reset ke 3 Data Awal Kelompok
+    function resetDefaultData() {
+      if (confirm("Kembalikan tabel ke 3 data awal anggota kelompok?")) {
+        saveDataMahasiswa([...defaultDataMahasiswa]);
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem("currentUser");
+      window.location.href = "login.html";
+    }
+
+    // Jalankan render saat halaman pertama kali dibuka
+    renderTabel();
+  </script>
+</body>
+</html

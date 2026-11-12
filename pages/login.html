@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login Mahasiswa - Portal Akademik & Proyek</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
+      --card-bg: rgba(255, 255, 255, 0.96);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --danger: #ef4444;
+      --success: #10b981;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-wrapper {
+      width: 100%;
+      max-width: 440px;
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 36px 32px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45);
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .brand-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .brand-icon {
+      width: 52px;
+      height: 52px;
+      background: #eef2ff;
+      color: var(--primary);
+      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .brand-header h1 {
+      font-size: 1.5rem;
+      color: var(--text-main);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .brand-header p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .alert {
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      margin-bottom: 18px;
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .alert.error {
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+      display: flex;
+    }
+
+    .alert.success {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+      display: flex;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    .input-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-box input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-size: 0.95rem;
+      color: var(--text-main);
+      transition: all 0.2s;
+      outline: none;
+    }
+
+    .input-box input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
+    }
+
+    .toggle-pwd {
+      position: absolute;
+      right: 12px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 4px 6px;
+    }
+
+    .toggle-pwd:hover {
+      color: var(--primary);
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 13px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 6px;
+    }
+
+    .btn-login:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-login:active {
+      transform: scale(0.99);
+    }
+
+    .quick-accounts {
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px dashed var(--border);
+    }
+
+    .quick-accounts p {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .chip-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+    }
+
+    .chip {
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      color: #334155;
+      font-size: 0.75rem;
+      padding: 5px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .chip:hover {
+      background: #e0e7ff;
+      border-color: #c7d2fe;
+      color: var(--primary);
+    }
+
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 18px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+
+    .back-link:hover {
+      color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-wrapper">
+    <div class="brand-header">
+      <div class="brand-icon">🎓</div>
+      <h1>Portal Mahasiswa</h1>
+      <p>Masuk menggunakan NPM dan kata sandi Anda</p>
+    </div>
+
+    <div id="alertBox" class="alert"></div>
+
+    <form id="loginForm" novalidate>
+      <div class="form-group">
+        <label for="npm">Nomor Pokok Mahasiswa (NPM)</label>
+        <div class="input-box">
+          <input type="text" id="npm" placeholder="Contoh: 11523054" autocomplete="off" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Kata Sandi</label>
+        <div class="input-box">
+          <input type="password" id="password" placeholder="Masukkan password" required />
+          <button type="button" class="toggle-pwd" id="togglePwd">Lihat</button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-login">Masuk ke Dashboard</button>
+    </form>
+
+    <!-- Shortcut klik untuk memudahkan testing/demo kelompok -->
+    <div class="quick-accounts">
+      <p>Klik akun tim di bawah untuk isi otomatis (Testing):</p>
+      <div class="chip-list">
+        <button type="button" class="chip" onclick="isiOtomatis('11523049', 'ikbalsaputra20')">Ikbal (Anggota 1)</button>
+        <button type="button" class="chip" onclick="isiOtomatis('11523054', 'ZEN300301')">Zainal (Anggota 2)</button>
+        <button type="button" class="chip" onclick="isiOtomatis('11523059', 'yansper2001')">Yayan (Anggota 3)</button>
+      </div>
+    </div>
+
+    <a href="../index.html" class="back-link">← Kembali ke Halaman Beranda</a>
+  </div>
+
+  <script>
+    // =========================================================================
+    // DATA MAHASISWA (PENGGANTI DATABASE MYSQL)
+    // Kolom: nama, npm, password, email, peran, jobdesk
+    // =========================================================================
+    const dataMahasiswa = [
+      {
+        nama: "Mochamad Ikbal Saputra",
+        npm: "11523049",
+        password: "ikbalsaputra20",
+        email: "ikbalsaputra744@gmail.com",
+        peran: "Anggota 1 - Project Lead & Frontend Architect",
+        jobdesk: [
+          "Membuat repository GitHub & workspace (Trello/GitHub Projects).",
+          "Mengatur struktur folder proyek & template navigasi/layout dasar.",
+          "Code review dan merge kode dari anggota lain."
+        ]
+      },
+      {
+        nama: "Zainal Abidin .B",
+        npm: "11523054",
+        password: "ZEN300301",
+        email: "zenabdn30@gmail.com",
+        peran: "Anggota 2 - Auth & Dashboard Developer",
+        jobdesk: [
+          "Membuat antarmuka dan alur validasi login.",
+          "Mengembangkan halaman Dashboard (ringkasan data/statistik setelah user berhasil login)."
+        ]
+      },
+      {
+        nama: "Yayan Puryansyah",
+        npm: "11523059",
+        password: "yansper2001",
+        email: "puryansyahy@gmail.com",
+        peran: "Anggota 3 - Core Feature Developer & Dokumentasi",
+        jobdesk: [
+          "Membuat fitur CRUD (Tambah, Lihat, Edit, Hapus) pada Modul Data Mahasiswa.",
+          "Menulis file README.md (termasuk aturan komunikasi & commit)."
+        ]
+      }
+    ];
+
+    // Simpan database statis ke localStorage agar bisa dibaca juga di Dashboard
+    localStorage.setItem("db_mahasiswa", JSON.stringify(dataMahasiswa));
+
+    // Cek jika sudah login sebelumnya, langsung arahkan ke dashboard
+    if (localStorage.getItem("currentUser")) {
+      window.location.href = "dashboard.html";
+    }
+
+    const loginForm = document.getElementById("loginForm");
+    const npmInput = document.getElementById("npm");
+    const passwordInput = document.getElementById("password");
+    const togglePwdBtn = document.getElementById("togglePwd");
+    const alertBox = document.getElementById("alertBox");
+
+    // Fitur Show/Hide Password
+    togglePwdBtn.addEventListener("click", () => {
+      const isHidden = passwordInput.type === "password";
+      passwordInput.type = isHidden ? "text" : "password";
+      togglePwdBtn.textContent = isHidden ? "Sembunyikan" : "Lihat";
+    });
+
+    // Helper untuk tombol demo
+    function isiOtomatis(npm, pwd) {
+      npmInput.value = npm;
+      passwordInput.value = pwd;
+      alertBox.style.display = "none";
+    }
+
+    function tampilkanPesan(pesan, tipe) {
+      alertBox.textContent = pesan;
+      alertBox.className = `alert ${tipe}`;
+    }
+
+    // Proses Validasi Login
+    loginForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const npm = npmInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!npm || !password) {
+        tampilkanPesan("⚠️ NPM dan Kata Sandi wajib diisi!", "error");
+        return;
+      }
+
+      // Cari kecocokan NPM dan Password pada array dataMahasiswa
+      const userDitemukan = dataMahasiswa.find(
+        (mhs) => mhs.npm === npm && mhs.password === password
+      );
+
+      if (userDitemukan) {
+        // Simpan sesi user yang sedang login (tanpa menyimpan password di sesi aktif)
+        const sesiUser = {
+          nama: userDitemukan.nama,
+          npm: userDitemukan.npm,
+          email: userDitemukan.email,
+          peran: userDitemukan.peran,
+          jobdesk: userDitemukan.jobdesk,
+          waktuLogin: new Date().toLocaleString("id-ID")
+        };
+
+        localStorage.setItem("currentUser", JSON.stringify(sesiUser));
+        tampilkanPesan(`✅ Login berhasil! Selamat datang, ${userDitemukan.nama}...`, "success");
+
+        setTimeout(() => {
+          window.location.href = "dashboard.html";
+        }, 900);
+      } else {
+        tampilkanPesan("❌ NPM atau Kata Sandi salah. Silakan periksa kembali.", "error");
+      }
+    });
+  </script>
+</body>
+</html>

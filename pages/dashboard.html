@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Mahasiswa - Portal Proyek</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background: var(--bg); color: var(--text-main); }
+
+    .navbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-brand { font-weight: 700; font-size: 1.1rem; color: var(--primary); }
+    .nav-links { display: flex; gap: 16px; align-items: center; }
+    .nav-links a { text-decoration: none; color: var(--text-muted); font-size: 0.9rem; font-weight: 500; }
+    .nav-links a:hover { color: var(--primary); }
+
+    .btn-logout {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .btn-logout:hover { background: #fecaca; }
+
+    .container { max-width: 1050px; margin: 32px auto; padding: 0 20px; }
+
+    .welcome-banner {
+      background: linear-gradient(135deg, #4f46e5, #312e81);
+      color: white;
+      padding: 28px 32px;
+      border-radius: 16px;
+      margin-bottom: 24px;
+    }
+    .welcome-banner h1 { font-size: 1.5rem; margin-bottom: 6px; }
+    .welcome-banner p { font-size: 0.9rem; opacity: 0.9; }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      padding: 20px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+    }
+    .stat-card span { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
+    .stat-card h2 { font-size: 1.6rem; margin-top: 6px; color: var(--text-main); }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+    }
+    .card h3 { font-size: 1.05rem; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+
+    .info-row { margin-bottom: 12px; font-size: 0.9rem; }
+    .info-row strong { display: inline-block; width: 90px; color: var(--text-muted); }
+
+    .jobdesk-list { padding-left: 20px; }
+    .jobdesk-list li { margin-bottom: 8px; font-size: 0.9rem; line-height: 1.5; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-brand">🎓 Sistem Informasi Kelompok</div>
+    <div class="nav-links">
+      <a href="../index.html">Beranda</a>
+      <a href="dashboard.html" style="color: var(--primary); font-weight: 700;">Dashboard</a>
+      <a href="mahasiswa.html">Data Mahasiswa</a>
+      <button class="btn-logout" onclick="logout()">Keluar</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="welcome-banner">
+      <h1 id="welcomeName">Selamat Datang!</h1>
+      <p id="welcomeRole">Memuat peran...</p>
+    </div>
+
+    <!-- Ringkasan Statistik -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span>TOTAL ANGGOTA TIM</span>
+        <h2 id="totalAnggota">3</h2>
+      </div>
+      <div class="stat-card">
+        <span>MODUL UTAMA</span>
+        <h2>4 Modul</h2>
+      </div>
+      <div class="stat-card">
+        <span>STATUS SESI</span>
+        <h2 style="color: #10b981; font-size: 1.25rem;">Aktif (Terautentikasi)</h2>
+      </div>
+    </div>
+
+    <!-- Detail Akun & Jobdesk -->
+    <div class="grid-2">
+      <div class="card">
+        <h3>Profil Mahasiswa Login</h3>
+        <div class="info-row"><strong>Nama</strong>: <span id="profNama">-</span></div>
+        <div class="info-row"><strong>NPM</strong>: <span id="profNpm">-</span></div>
+        <div class="info-row"><strong>Email</strong>: <span id="profEmail">-</span></div>
+        <div class="info-row"><strong>Peran</strong>: <span id="profPeran">-</span></div>
+        <div class="info-row"><strong>Login Pada</strong>: <span id="profWaktu">-</span></div>
+      </div>
+
+      <div class="card">
+        <h3>Rincian Jobdesk Anda</h3>
+        <ul class="jobdesk-list" id="jobdeskList"></ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Cek Autentikasi: Jika belum login, tendang kembali ke halaman login
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    if (!currentUser) {
+      window.location.href = "login.html";
+    }
+
+    // Tampilkan data ke elemen HTML
+    document.getElementById("welcomeName").textContent = `Halo, ${currentUser.nama}!`;
+    document.getElementById("welcomeRole").textContent = currentUser.peran;
+
+    document.getElementById("profNama").textContent = currentUser.nama;
+    document.getElementById("profNpm").textContent = currentUser.npm;
+    document.getElementById("profEmail").textContent = currentUser.email;
+    document.getElementById("profPeran").textContent = currentUser.peran;
+    document.getElementById("profWaktu").textContent = currentUser.waktuLogin;
+
+    const jobdeskList = document.getElementById("jobdeskList");
+    currentUser.jobdesk.forEach(tugas => {
+      const li = document.createElement("li");
+      li.textContent = tugas;
+      jobdeskList.appendChild(li);
+    });
+
+    function logout() {
+      localStorage.removeItem("currentUser");
+      window.location.href = "login.html";
+    }
+  </script>
+</body>
+</html>
